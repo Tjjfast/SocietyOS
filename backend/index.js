@@ -1,38 +1,60 @@
+require('dotenv').config();
 const http = require('http');
 const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 const app = require('./src/app');
-const { connectMongo, connectPG } = require('./src/shared/config/db');
-require('dotenv').config();
-require('./src/modules/notification/notification.worker');
+const prisma = require('./src/shared/config/prisma');
+const { startPassExpiryCron } = require('./src/shared/cron/passExpiry');
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: '*' }
+  cors: { origin: process.env.CORS_ORIGIN || '*', credentials: true }
 });
 
-// Make io available everywhere
-app.set('io', io);
+// Socket.IO authentication
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+  if (!token) return next(new Error('Authentication required'));
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = decoded;
+    next();
+  } catch (err) {
+    next(new Error('Invalid token'));
+  }
+});
 
 io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
-
-  // Each user joins their own room by userId
-  socket.on('joinRoom', (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined room`);
-  });
+  // Join user's personal room for notifications
+  socket.join(socket.user.id);
+  console.log(`[Socket] User ${socket.user.id} connected`);
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+    console.log(`[Socket] User ${socket.user.id} disconnected`);
   });
 });
 
+app.set('io', io);
+
+const PORT = process.env.PORT || 5000;
+
 const start = async () => {
-  await connectMongo();
-  await connectPG();
-  server.listen(process.env.PORT || 5000, () => {
-    console.log('SocietyOS API running');
-  });
+  try {
+    await prisma.$connect();
+    console.log('PostgreSQL connected via Prisma');
+
+    // Start cron jobs
+    startPassExpiryCron();
+
+    server.listen(PORT, () => {
+      console.log(`SocietyOS API running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start:', err);
+    process.exit(1);
+  }
 };
 
 start();

@@ -3,42 +3,106 @@ const prisma = require('../../shared/config/prisma');
 const getProfile = async (userId) => {
   return await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true, phone: true, role: true, status: true, flat: true, society: true }
+    select: { id: true, name: true, email: true, phone: true, role: true, status: true, flat: true, society: true, flatId: true, societyId: true }
   });
 };
 
 const updateProfile = async (userId, data) => {
+  const allowed = {};
+  if (data.name) allowed.name = data.name;
+  if (data.phone) allowed.phone = data.phone;
+
   return await prisma.user.update({
     where: { id: userId },
-    data: { name: data.name, phone: data.phone }
+    data: allowed,
+    select: { id: true, name: true, email: true, phone: true, role: true }
   });
+};
+
+const getAllUsers = async (societyId, filters = {}) => {
+  const where = { societyId };
+  if (filters.role) where.role = filters.role;
+  if (filters.status) where.status = filters.status;
+
+  return await prisma.user.findMany({
+    where,
+    select: {
+      id: true, name: true, email: true, phone: true,
+      role: true, status: true, createdAt: true,
+      flat: { select: { number: true, floor: true } }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+};
+
+const getUserById = async (societyId, userId) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true, name: true, email: true, phone: true,
+      role: true, status: true, createdAt: true,
+      flat: { select: { id: true, number: true, floor: true } },
+      society: { select: { id: true, name: true } }
+    }
+  });
+  if (!user || user.society?.id !== societyId) throw new Error('User not found');
+  return user;
 };
 
 const getPendingUsers = async (societyId) => {
   return await prisma.user.findMany({
     where: { societyId, status: 'PENDING' },
-    select: { id: true, name: true, email: true, role: true, createdAt: true, flat: true }
+    select: { id: true, name: true, email: true, role: true, createdAt: true, flat: { select: { number: true } } }
   });
 };
 
-const approveUser = async (userId) => {
-  return await prisma.user.update({
+const approveUser = async (userId, societyId) => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || user.societyId !== societyId) throw new Error('User not found');
+
+  const updated = await prisma.user.update({
     where: { id: userId },
     data: { status: 'APPROVED' }
   });
+
+  // Create notification
+  await prisma.notification.create({
+    data: {
+      userId,
+      type: 'ACCOUNT_APPROVED',
+      title: 'Account Approved',
+      body: 'Your account has been approved. You can now access all features.',
+    }
+  });
+
+  return updated;
 };
 
-const rejectUser = async (userId) => {
-  return await prisma.user.update({
+const rejectUser = async (userId, societyId) => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || user.societyId !== societyId) throw new Error('User not found');
+
+  const updated = await prisma.user.update({
     where: { id: userId },
     data: { status: 'REJECTED' }
   });
+
+  await prisma.notification.create({
+    data: {
+      userId,
+      type: 'ACCOUNT_REJECTED',
+      title: 'Account Rejected',
+      body: 'Your account registration has been rejected. Please contact your society admin.',
+    }
+  });
+
+  return updated;
 };
 
 const getSocietyContacts = async (societyId) => {
   return await prisma.user.findMany({
     where: { societyId, status: 'APPROVED' },
-    select: { id: true, name: true, phone: true, role: true, flat: true }
+    select: { id: true, name: true, phone: true, role: true, flat: { select: { number: true } } }
   });
 };
 
@@ -49,4 +113,8 @@ const saveFcmToken = async (userId, token) => {
   });
 };
 
-module.exports = { getProfile, updateProfile, getPendingUsers, approveUser, rejectUser, getSocietyContacts, saveFcmToken };
+module.exports = {
+  getProfile, updateProfile, getAllUsers, getUserById,
+  getPendingUsers, approveUser, rejectUser,
+  getSocietyContacts, saveFcmToken
+};

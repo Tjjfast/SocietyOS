@@ -8,6 +8,8 @@ router.patch('/me', authenticate, controller.updateProfile);
 router.post('/fcm-token', authenticate, controller.saveFcmToken);
 router.get('/contacts', authenticate, controller.getContacts);
 router.get('/pending', authenticate, authorize('ADMIN'), controller.getPending);
+router.get('/', authenticate, authorize('ADMIN'), controller.getAllUsers);
+router.get('/:id', authenticate, authorize('ADMIN'), controller.getUserById);
 router.patch('/:id/approve', authenticate, authorize('ADMIN'), controller.approve);
 router.patch('/:id/reject', authenticate, authorize('ADMIN'), controller.reject);
 

@@ -1,49 +1,45 @@
+const complaintService = require('./complaint.service');
+
 const create = async (req, res) => {
   try {
-    const imageUrl = req.file?.path || null;
-    const complaint = await service.createComplaint({
+    const complaint = await complaintService.createComplaint({
       ...req.body,
       userId: req.user.id,
-      imageUrl
+      flatId: req.user.flatId,
+      societyId: req.user.societyId,
     });
     res.status(201).json({ success: true, data: complaint });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 };
-const getAll = async (req, res) => {
+
+const getMyComplaints = async (req, res) => {
   try {
-    const filters = {};
-    if (req.user.role === 'RESIDENT') filters.userId = req.user.id;
-    if (req.user.role === 'SERVICE') filters.assignedTo = req.user.id;
-    const complaints = await service.getComplaints(filters);
+    const complaints = await complaintService.getComplaints({ userId: req.user.id });
     res.json({ success: true, data: complaints });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 };
 
-const updateStatus = async (req, res) => {
+const getAll = async (req, res) => {
+  try {
+    const complaints = await complaintService.getComplaints({ societyId: req.user.societyId });
+    res.json({ success: true, data: complaints });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+const close = async (req, res) => {
   try {
     const io = req.app.get('io');
-    const complaint = await service.updateComplaintStatus(
-      req.params.id,
-      req.body.status,
-      io
-    );
+    const complaint = await complaintService.closeComplaint(req.params.id, req.body.closingNote, io);
     res.json({ success: true, data: complaint });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 };
 
-const assign = async (req, res) => {
-  try {
-    const complaint = await service.assignComplaint(req.params.id, req.body.assignedTo);
-    res.json({ success: true, data: complaint });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-};
-
-module.exports = { create, getAll, updateStatus, assign };
+module.exports = { create, getMyComplaints, getAll, close };
