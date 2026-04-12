@@ -6,11 +6,11 @@ Migrate the existing SocietyOS Expo mobile scaffold into a production-ready, rol
 
 ## Phases
 
-- [ ] **Phase 1: Auth Flow & Root Routing** - Role Selection and Login screens; role-based navigation groups
-- [ ] **Phase 2: Resident App** - All 4 Resident tabs (Home, Visitors, Messages, Vault) fully implemented
-- [ ] **Phase 3: Guard ShieldGuard App** - All 4 Guard tabs (Logs, Scan, Status, Alerts) + Settings screen
-- [ ] **Phase 4: Service Staff App** - All 3 Service tabs (Home/Digital ID, Activity, Profile) fully implemented
-- [ ] **Phase 5: Shared Polish & QA** - Shared components, tab bar audit, TypeScript validation, micro-animations
+- [x] **Phase 1: Auth Flow & Root Routing** - Role Selection and Login screens; role-based navigation groups
+- [x] **Phase 2: Resident App** - All 4 Resident tabs (Home, Visitors, Messages, Vault) fully implemented
+- [x] **Phase 3: Guard ShieldGuard App** - All 4 Guard tabs (Logs, Scan, Status, Alerts) + Settings screen
+- [x] **Phase 4: Service Staff App** - All 3 Service tabs (Home/Digital ID, Activity, Profile) fully implemented
+- [x] **Phase 5: Shared Polish & QA** - Shared components, tab bar audit, TypeScript validation, micro-animations
 
 ## Phase Details
 
@@ -27,11 +27,11 @@ Migrate the existing SocietyOS Expo mobile scaffold into a production-ready, rol
 **Plans**: 5 plans
 
 Plans:
-- [ ] 01-01: Refactor `app/_layout.tsx` — root Stack with `(auth)`, `(resident)`, `(guard)`, `(service)` groups
-- [ ] 01-02: Create `app/(auth)/_layout.tsx` — Stack layout, headerShown false
-- [ ] 01-03: Create `app/(auth)/index.tsx` — Role Selection screen (Stitch "Select Role (Streamlined)")
-- [ ] 01-04: Create `app/(auth)/login.tsx` — Login screen (Stitch "Login (with Back)")
-- [ ] 01-05: Wire navigation flow — role selection → login → tab group routing
+- [x] 01-01: Refactor `app/_layout.tsx` — root Stack with `(auth)`, `(resident)`, `(guard)`, `(service)` groups
+- [x] 01-02: Create `app/(auth)/_layout.tsx` — Stack layout, headerShown false
+- [x] 01-03: Create `app/(auth)/index.tsx` — Role Selection screen (Stitch "Select Role (Streamlined)")
+- [x] 01-04: Create `app/(auth)/login.tsx` — Login screen (Stitch "Login (with Back)")
+- [x] 01-05: Wire navigation flow — role selection → login → tab group routing
 
 ### Phase 2: Resident App
 **Goal**: Build all four Resident tab screens faithfully matching Stitch "Gunmetal + Aqua" HTML templates.
@@ -48,12 +48,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 02-01: Create `app/(resident)/_layout.tsx` — 4-tab Gunmetal blur nav (Home, Visitors, Messages, Vault)
-- [ ] 02-02: Rebuild `app/(resident)/index.tsx` — Home Dashboard (Stitch "Resident Home (Gunmetal)")
-- [ ] 02-03: Create `app/(resident)/visitors.tsx` — Access Management (Stitch "Access Management (Aqua)")
-- [ ] 02-04: Create `app/(resident)/create-pass.tsx` — Create Pass form (Stitch "Create Pass")
-- [ ] 02-05: Create `app/(resident)/messages.tsx` — Alerts & Notifications (Stitch "Alerts (Gunmetal)")
-- [ ] 02-06: Create `app/(resident)/vault.tsx` — Themed empty state placeholder
+- [x] 02-01: Create ResidentHeader component — glassmorphism top app bar with ping dot
+- [x] 02-02: Rebuild `app/(resident)/index.tsx` — Home Dashboard (Stitch "Resident Home (Gunmetal)")
+- [x] 02-03: Create `app/(resident)/visitors.tsx` — Access Management (Stitch "Access Management (Aqua)")
+- [x] 02-04: Create `app/(resident)/create-pass.tsx` — Create Pass form (Stitch "Create Pass")
+- [x] 02-05: Create `app/(resident)/messages.tsx` — Alerts & Notifications (Stitch "Alerts (Gunmetal)")
+- [x] 02-06: Create `app/(resident)/vault.tsx` — Themed empty state placeholder
 
 ### Phase 3: Guard ShieldGuard App
 **Goal**: Build all Guard tab screens plus Settings, faithfully matching Stitch Guard HTML templates.
@@ -70,12 +70,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 03-01: Create `app/(guard)/_layout.tsx` — 4-tab nav with ShieldGuard header and settings icon
-- [ ] 03-02: Create `app/(guard)/logs.tsx` — Activity Logs (Stitch "Guard Dashboard (Logs)")
-- [ ] 03-03: Create `app/(guard)/scan.tsx` — QR Scanner mock (Stitch "Camera Scanner")
-- [ ] 03-04: Create `app/(guard)/status.tsx` — Manual Entry (Stitch "Guard Status (Manual Entry)")
-- [ ] 03-05: Create `app/(guard)/alerts.tsx` — Guard Alerts (Stitch "Guard Alerts")
-- [ ] 03-06: Create `app/(guard)/settings.tsx` — Settings (Stitch "Guard Settings")
+- [x] 03-01: Create GuardHeader component — ShieldGuard branding + settings nav
+- [x] 03-02: Rebuild `app/(guard)/logs.tsx` — Activity Logs (Stitch "Guard Dashboard (Logs)")
+- [x] 03-03: Rebuild `app/(guard)/scan.tsx` — QR Scanner mock (Stitch "Camera Scanner")
+- [x] 03-04: Rebuild `app/(guard)/status.tsx` — Manual Entry (Stitch "Guard Status (Manual Entry)")
+- [x] 03-05: Rebuild `app/(guard)/alerts.tsx` — Guard Alerts (Stitch "Guard Alerts")
+- [x] 03-06: Rebuild `app/(guard)/settings.tsx` — Settings (Stitch "Guard Settings")
 
 ### Phase 4: Service Staff App
 **Goal**: Build all three Service Staff tab screens faithfully matching Stitch Service HTML templates.
@@ -90,10 +90,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 04-01: Create `app/(service)/_layout.tsx` — 3-tab nav (Home, Activity, Profile)
-- [ ] 04-02: Create `app/(service)/index.tsx` — Digital ID / Home (Stitch "Service Dashboard")
-- [ ] 04-03: Create `app/(service)/activity.tsx` — Activity Log (reuses Guard log feed pattern)
-- [ ] 04-04: Create `app/(service)/profile.tsx` — Profile & Settings (Stitch "Service Profile")
+- [x] 04-01: Polish `app/(service)/_layout.tsx` — 3-tab nav with aqua active tint
+- [x] 04-02: Rebuild `app/(service)/index.tsx` — Digital ID / Home with animated glow QR card
+- [x] 04-03: Rebuild `app/(service)/activity.tsx` — Activity Log with filter chips and summary bar
+- [x] 04-04: Rebuild `app/(service)/profile.tsx` — Profile & Settings with logout danger zone
 
 ### Phase 5: Shared Polish & QA
 **Goal**: Extract shared components, audit all screens against Stitch HTML, add micro-animations and haptics, achieve zero TypeScript errors.
@@ -108,18 +108,18 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 05-01: Extract and finalize `components/ui/GlassInput.tsx` with icon support
-- [ ] 05-02: Extract and finalize `components/ui/StatusPill.tsx` — all badge variants
-- [ ] 05-03: Extract and finalize `components/ui/SettingsRow.tsx` — reusable settings list item
-- [ ] 05-04: Full tab bar audit across all 3 role apps — fix any icon/color/spacing drift vs Stitch
-- [ ] 05-05: Add screen transition animations + haptic feedback; run `tsc --noEmit` and fix all errors
+- [x] 05-01: Extract and finalize `components/ui/GlassInput.tsx` with icon support and cream/dark variants
+- [x] 05-02: Extract and finalize `components/ui/StatusPill.tsx` — 5 badge variants (success/warning/danger/neutral/info)
+- [x] 05-03: Extract and finalize `components/ui/SettingsRow.tsx` — reusable settings list item + group + divider
+- [x] 05-04: Full tab bar audit across all 3 role apps — cleaned imports, added HapticTab to all layouts
+- [x] 05-05: Added haptics utility, wired triggerHaptic to CTAs; `tsc --noEmit` passes with zero errors
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Auth Flow & Root Routing | 0/5 | Not started | - |
-| 2. Resident App | 0/6 | Not started | - |
-| 3. Guard ShieldGuard App | 0/6 | Not started | - |
-| 4. Service Staff App | 0/4 | Not started | - |
-| 5. Shared Polish & QA | 0/5 | Not started | - |
+| 1. Auth Flow & Root Routing | 5/5 | Complete | 2026-04-13 |
+| 2. Resident App | 6/6 | Complete | 2026-04-13 |
+| 3. Guard ShieldGuard App | 6/6 | Complete | 2026-04-13 |
+| 4. Service Staff App | 4/4 | Complete | 2026-04-13 |
+| 5. Shared Polish & QA | 5/5 | Complete | 2026-04-13 |

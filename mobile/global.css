@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* Gunmetal background variable mapped for NativeWind if needed */
+  }
+  
+  /* Prevent default blue scaling on web */
+  * {
+    @apply border-outline/20;
+  }
+}
+
+body {
+  background-color: #090e18;
+  color: #dbe5ff;
+}
