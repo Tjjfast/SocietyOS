@@ -1,15 +1,8 @@
 const prisma = require('../../shared/config/prisma');
 
-const VALID_TRANSITIONS = {
-  CREATED: ['ASSIGNED'],
-  ASSIGNED: ['IN_PROGRESS'],
-  IN_PROGRESS: ['USER_CONFIRMED'],
-  USER_CONFIRMED: ['CLOSED'],
-};
-
-const createComplaint = async ({ title, description, category, userId, flatId }) => {
+const createComplaint = async ({ title, description, category, userId, flatId, societyId }) => {
   return await prisma.complaint.create({
-    data: { title, description, category, userId, flatId, status: 'CREATED' }
+    data: { title, description, category, userId, flatId, societyId, status: 'OPEN' }
   });
 };
 
@@ -21,23 +14,18 @@ const getComplaints = async (filters = {}) => {
   });
 };
 
-const updateComplaintStatus = async (id, newStatus, io) => {
+const closeComplaint = async (id, closingNote, io) => {
   const complaint = await prisma.complaint.findUnique({ where: { id } });
   if (!complaint) throw new Error('Complaint not found');
 
-  const allowed = VALID_TRANSITIONS[complaint.status];
-  if (!allowed?.includes(newStatus)) {
-    throw new Error(`Invalid transition: ${complaint.status} → ${newStatus}`);
-  }
-
   const updated = await prisma.complaint.update({
     where: { id },
-    data: { status: newStatus, updatedAt: new Date() }
+    data: { status: 'CLOSED', closingNote, updatedAt: new Date() }
   });
 
   if (io) {
-    io.to(updated.userId).emit('complaint:updated', {
-      message: `Complaint status updated to ${newStatus}`,
+    io.to(updated.userId).emit('complaint:closed', {
+      message: `Your complaint "${updated.title}" has been closed`,
       complaint: updated
     });
   }
@@ -45,11 +33,4 @@ const updateComplaintStatus = async (id, newStatus, io) => {
   return updated;
 };
 
-const assignComplaint = async (id, assignedTo) => {
-  return await prisma.complaint.update({
-    where: { id },
-    data: { assignedTo, status: 'ASSIGNED' }
-  });
-};
-
-module.exports = { createComplaint, getComplaints, updateComplaintStatus, assignComplaint };
+module.exports = { createComplaint, getComplaints, closeComplaint };

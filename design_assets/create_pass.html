@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SocietyOS - Create Visitor Pass</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "gunmetal": "#2C3E50",
+                        "gunmetal-light": "#34495e",
+                        "gunmetal-dark": "#1a252f",
+                        "tertiary-fixed": "#53fec2",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#1c2633",
+                        "on-background": "#dbe5ff",
+                        "surface-container-low": "#0f1621",
+                        "primary": "#b3c9e2",
+                        "on-secondary": "#3c0091",
+                        "secondary": "#9babce",
+                        "on-primary-container": "#00285b",
+                        "surface-container": "#151f2b",
+                        "secondary-fixed": "#e9ddff",
+                        "tertiary": "#25e0a7",
+                        "surface-tint": "#b3c9e2",
+                        "on-secondary-container": "#c4abff",
+                        "tertiary-fixed-dim": "#25e0a7",
+                        "primary-container": "#34495e",
+                        "surface-bright": "#253141",
+                        "outline-variant": "#3e4759",
+                        "surface-dim": "#090e18",
+                        "on-primary": "#002f68",
+                        "on-secondary-fixed": "#23005c",
+                        "primary-fixed-dim": "#b3c9e2",
+                        "on-surface": "#dbe5ff",
+                        "on-tertiary-fixed": "#002115",
+                        "on-surface-variant": "#9babce",
+                        "tertiary-container": "#00a578",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#9babce",
+                        "inverse-primary": "#005bbf",
+                        "on-primary-fixed": "#001a40",
+                        "inverse-surface": "#dbe5ff",
+                        "surface-variant": "#253141",
+                        "on-tertiary-container": "#003121",
+                        "surface-container-lowest": "#060a12",
+                        "primary-fixed": "#d7e2ff",
+                        "background": "#090e18",
+                        "surface-container-highest": "#2c3e50",
+                        "surface": "#090e18",
+                        "on-tertiary-fixed-variant": "#00513a",
+                        "secondary-container": "#152641",
+                        "on-tertiary": "#003827",
+                        "outline": "#6c7a8f",
+                        "on-primary-fixed-variant": "#004492",
+                        "inverse-on-surface": "#1a252f",
+                        "on-secondary-fixed-variant": "#5516be"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #090e18;
+            background-image: radial-gradient(at 0% 0%, rgba(44, 62, 80, 0.2) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(52, 73, 94, 0.2) 0px, transparent 50%);
+            min-height: 100vh;
+            color: #dbe5ff;
+        }
+        .glass-card {
+            background: rgba(44, 62, 80, 0.4);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .input-glass {
+            background: #FAF9F6;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        input::-webkit-calendar-picker-indicator {
+            filter: invert(0);
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-gunmetal-light/30">
+<!-- TopAppBar (from COMPONENTS_10) -->
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-6 h-16 bg-slate-950/60 backdrop-blur-[24px] border-b border-slate-400/10 shadow-2xl shadow-black/40">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-200 text-slate-200 hover:bg-slate-800/40 transition-colors p-1 rounded-lg">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-lg font-bold tracking-tighter text-slate-100">SocietyOS</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-200 text-slate-200 hover:bg-slate-800/40 transition-colors p-1 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-gunmetal flex items-center justify-center overflow-hidden border border-white/10">
+<span class="material-symbols-outlined text-sm" data-icon="person">person</span>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Page Header -->
+<div class="mb-10">
+<h2 class="text-[1.75rem] font-bold tracking-tight text-slate-100 mb-2">Create Access Pass</h2>
+<p class="text-sm text-slate-400 font-medium">Issue a digital entry permit for your upcoming guests.</p>
+</div>
+<!-- Form Section -->
+<div class="space-y-6">
+<!-- Visitor Info Section -->
+<div class="glass-card rounded-[24px] p-6">
+<div class="grid grid-cols-1 gap-6">
+<div class="space-y-2">
+<label class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-1">Guest Name</label>
+<div class="relative group">
+<input class="w-full input-glass rounded-xl px-4 py-3.5 focus:ring-1 focus:ring-slate-500/50 focus:border-slate-500/50 outline-none transition-all text-slate-800 placeholder:text-slate-500" placeholder="e.g. John Doe" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 group-focus-within:text-slate-400 transition-colors text-xl text-slate-400" data-icon="person">person</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-1">Phone Number</label>
+<div class="relative group">
+<input class="w-full input-glass rounded-xl px-4 py-3.5 focus:ring-1 focus:ring-slate-500/50 focus:border-slate-500/50 outline-none transition-all text-slate-800 placeholder:text-slate-500" placeholder="+91 (000) 000-0000" type="tel"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 group-focus-within:text-slate-400 transition-colors text-xl text-slate-400" data-icon="call">call</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Visit Type Section -->
+<div class="glass-card rounded-[24px] p-6">
+<label class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-4 px-1">Access Type</label>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex flex-col items-center justify-center p-4 rounded-xl input-glass hover:bg-white/5 transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-slate-400 mb-2" data-icon="local_shipping">local_shipping</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Delivery</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl bg-[#34495e] border border-slate-500/30 transition-all active:scale-95 group shadow-lg shadow-black/20">
+<span class="material-symbols-outlined text-[#dbe5ff] mb-2 text-slate-400" data-icon="directions_car">directions_car</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-[#dbe5ff]">Cab</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl input-glass hover:bg-white/5 transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-slate-400 mb-2" data-icon="family_history">family_history</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Guest</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 rounded-xl input-glass hover:bg-white/5 transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-slate-400 mb-2" data-icon="construction">construction</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Service</span>
+</button>
+</div>
+</div>
+<!-- Schedule Section -->
+<div class="glass-card rounded-[24px] p-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-1">Access Date</label>
+<div class="relative group">
+<input class="w-full input-glass rounded-xl px-4 py-3.5 focus:ring-1 focus:ring-slate-500/50 focus:border-slate-500/50 outline-none transition-all text-slate-800 placeholder:text-slate-500" type="date"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-1">Arrival Time</label>
+<div class="relative group">
+<input class="w-full input-glass rounded-xl px-4 py-3.5 focus:ring-1 focus:ring-slate-500/50 focus:border-slate-500/50 outline-none transition-all text-slate-800 placeholder:text-slate-500" type="time"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Options Section -->
+<div class="glass-card rounded-[24px] p-6 flex items-center justify-between">
+<div>
+<h4 class="text-sm font-bold text-slate-100">Allow multiple entries</h4>
+<p class="text-[11px] text-slate-500 mt-0.5">Enable for all-day access with same pass</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer text-slate-800 placeholder:text-slate-500" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#34495e]"></div>
+</label>
+</div>
+<!-- CTA Section -->
+<div class="pt-4">
+<button class="w-full h-14 rounded-xl bg-gunmetal text-white font-bold text-sm tracking-widest shadow-xl shadow-black/40 hover:bg-gunmetal-light active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined text-xl" data-icon="qr_code_2">qr_code_2</span>
+                GENERATE QR PASS
+            </button>
+<p class="text-[9px] text-center text-slate-600 mt-6 uppercase tracking-[0.3em] font-medium">Secured by SocietyOS Identity Shield</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (from COMPONENTS_10) -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[20px] bg-[#090e18]/80 backdrop-blur-[24px] border-t border-slate-400/10 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex justify-around items-center h-20 px-4 pb-4">
+<a class="flex flex-col items-center justify-center text-[#9babce] py-2 hover:text-slate-100 transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Feed</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#34495e] text-[#dbe5ff] rounded-[20px] px-5 py-2 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Visitors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9babce] py-2 hover:text-slate-100 transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Messages</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9babce] py-2 hover:text-slate-100 transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Vault</span>
+</a>
+</nav>
+<!-- Decorative background elements (Gunmetal themed) -->
+<div class="fixed top-1/4 right-0 w-64 h-64 bg-gunmetal-light/10 blur-[120px] -z-10 pointer-events-none"></div>
+<div class="fixed bottom-1/4 left-0 w-80 h-80 bg-gunmetal-dark/10 blur-[120px] -z-10 pointer-events-none"></div>
+</body></html>

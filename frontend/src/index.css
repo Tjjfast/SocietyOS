@@ -1,3 +1,159 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-gunmetal-bg: #090e18;
+  --color-gunmetal-surface: #090e18;
+  --color-gunmetal-surface-low: #0c1321;
+  --color-gunmetal-surface-high: #152641;
+  --color-gunmetal-primary: #b3c9e2;
+  --color-gunmetal-primary-container: #34495e;
+  --color-gunmetal-on-primary-container: #ffffff;
+  --color-gunmetal-on-surface: #dbe5ff;
+  --color-gunmetal-on-surface-variant: #9babce;
+  --color-gunmetal-outline: rgba(56, 72, 102, 0.1);
+  --color-gunmetal-error: #bb5551;
+  --color-gunmetal-success: #1b6859;
+  
+  --font-inter: 'Inter', sans-serif;
+  
+  --radius-xl: 20px;
+}
+
+:root {
+  background-color: var(--color-gunmetal-bg);
+  color: var(--color-gunmetal-on-surface);
+  font-family: var(--font-inter);
+  letter-spacing: -0.01em;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Typography Scale adjusted per DESIGN.md */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-gunmetal-on-surface);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+p, span, div {
+  color: var(--color-gunmetal-on-surface-variant);
+}
+
+strong, b, .label-text {
+  color: var(--color-gunmetal-on-surface);
+}
+
+/* Core Glass Components per DESIGN.md */
+
+.glass-panel {
+  background: rgba(20, 25, 35, 0.6);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--color-gunmetal-outline);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Surfaces - no lines rule, separation by value */
+.surface-card {
+  background-color: var(--color-gunmetal-surface-low);
+  border-radius: var(--radius-xl);
+  /* Ghost border only for containment */
+  border: 1px solid var(--color-gunmetal-outline);
+}
+
+.surface-card-active {
+  background-color: var(--color-gunmetal-surface-high);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(56, 72, 102, 0.2);
+}
+
+/* Primary Button - Gunmetal Core */
+.btn-primary {
+  background: var(--color-gunmetal-primary-container);
+  color: var(--color-gunmetal-on-primary-container) !important;
+  border-radius: var(--radius-xl);
+  padding: 12px 24px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.btn-primary * {
+  color: var(--color-gunmetal-on-primary-container) !important;
+}
+
+.btn-primary:hover {
+  background-color: #3d566e; /* slightly brighter gunmetal */
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-gunmetal-on-surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: 12px 24px;
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary * {
+  color: var(--color-gunmetal-on-surface) !important;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Input Fields */
+.input-glass {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-gunmetal-outline);
+  border-radius: var(--radius-xl);
+  color: var(--color-gunmetal-on-surface);
+  padding: 12px 16px;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input-glass:focus {
+  border-color: rgba(56, 72, 102, 0.3);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Nav Rail Component */
+.nav-rail {
+  background: rgba(12, 19, 33, 0.8);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Scrollbar styling for a dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gunmetal-surface-high);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gunmetal-primary-container);
+}

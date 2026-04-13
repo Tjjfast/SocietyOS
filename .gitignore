@@ -1,2 +1,48 @@
+# Dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnp.*
+
+# Environment Variables
 .env
+.env.*
+!.env.example
+
+# Build Artifacts
+dist/
+build/
+coverage/
+*.log
+*.tsbuildinfo
+
+# Mobile / Expo
+mobile/.expo/
+mobile/web-build/
+mobile/dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Prisma (Backend)
+backend/src/generated/prisma/
+
+# Editor / OS Files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# GSD Agent & Planning Logs
+.planning/scratch/
+.system_generated/
+.gemini/
+.antigravity/

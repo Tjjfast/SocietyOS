@@ -3,6 +3,14 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminLayout from './components/AdminLayout';
+import AdminUsers from './pages/admin/Users';
+import AdminFlats from './pages/admin/Flats';
+import AdminEntries from './pages/admin/EntryLog';
+import AdminComplaints from './pages/admin/Complaints';
+import AdminNotices from './pages/admin/Notices';
+import AdminSettings from './pages/admin/Settings';
+
 import ResidentDashboard from './pages/resident/Dashboard';
 import SecurityDashboard from './pages/security/Dashboard';
 import ServiceDashboard from './pages/service/Dashboard';
@@ -15,9 +23,18 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={
             <ProtectedRoute roles={['ADMIN']}>
-              <AdminDashboard />
+              <AdminLayout />
             </ProtectedRoute>
-          } />
+          }>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="flats" element={<AdminFlats />} />
+            <Route path="entries" element={<AdminEntries />} />
+            <Route path="complaints" element={<AdminComplaints />} />
+            <Route path="notices" element={<AdminNotices />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
+
           <Route path="/resident" element={
             <ProtectedRoute roles={['RESIDENT']}>
               <ResidentDashboard />

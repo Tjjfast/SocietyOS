@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SocietyOS Resident Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#53fec2",
+                    "error-container": "#93000a",
+                    "surface-container-high": "#25293a",
+                    "on-background": "#dee1f7",
+                    "surface-container-low": "#161b2b",
+                    "primary": "#dbe5ff",
+                    "on-secondary": "#3c0091",
+                    "secondary": "#34495E",
+                    "on-primary-container": "#00285b",
+                    "surface-container": "#1a1f2f",
+                    "secondary-fixed": "#e9ddff",
+                    "tertiary": "#25e0a7",
+                    "surface-tint": "#acc7ff",
+                    "on-secondary-container": "#c4abff",
+                    "tertiary-fixed-dim": "#25e0a7",
+                    "primary-container": "#34495E",
+                    "surface-bright": "#343949",
+                    "outline-variant": "#424753",
+                    "surface-dim": "#0e1322",
+                    "on-primary": "#002f68",
+                    "on-secondary-fixed": "#23005c",
+                    "primary-fixed-dim": "#acc7ff",
+                    "on-surface": "#dee1f7",
+                    "on-tertiary-fixed": "#002115",
+                    "on-surface-variant": "#9babce",
+                    "tertiary-container": "#00a578",
+                    "error": "#ffb4ab",
+                    "on-error": "#690005",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "inverse-primary": "#005bbf",
+                    "on-primary-fixed": "#001a40",
+                    "inverse-surface": "#dee1f7",
+                    "surface-variant": "#2f3445",
+                    "on-tertiary-container": "#003121",
+                    "surface-container-lowest": "#090e1c",
+                    "primary-fixed": "#d7e2ff",
+                    "background": "#090e18",
+                    "surface-container-highest": "#2f3445",
+                    "surface": "#090e18",
+                    "on-tertiary-fixed-variant": "#00513a",
+                    "secondary-container": "#34495e",
+                    "on-tertiary": "#003827",
+                    "outline": "#8c909e",
+                    "on-primary-fixed-variant": "#004492",
+                    "inverse-on-surface": "#2b3040",
+                    "on-secondary-fixed-variant": "#5516be"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background: #090e18;
+            min-height: 100vh;
+            color: #dbe5ff;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.01em;
+        }
+        .glass-card {
+            background: rgba(20, 25, 35, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px rgba(255, 255, 255, 0.1) solid;
+            border-radius: 20px;
+        }
+        .gunmetal-surface {
+            background-color: #34495E;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        h2 {
+            letter-spacing: 0.25em !important;
+        }
+    </style>
+</head>
+<body class="pb-32">
+<!-- TopAppBar via DataStore -->
+<header class="fixed top-0 w-full z-50 bg-slate-950/60 backdrop-blur-[24px] border-b border-slate-400/10 shadow-2xl shadow-black/40 flex items-center justify-between px-6 h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-slate-400/20">
+<img alt="Alex Rivera" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBh8jXwKI4vjazD0e_pD3T9-m2x-E71ZFqq_0p7ZmSDOVteceFqOySCVZlZSHy8vHAzrpwUWPIlXx66gBVKhJbEXYaaNrTYm_DOvYL-uZyH73NqmiCEXTOdqJEa-DnYw869RJ2fi7bSuGmUIalViSON8pb0sEI5ApDcMS6gS2Wyx_2U2_TqEOb1OwFsEnzF8nSwTb_VY-oxqGNGLVdL4KWQ2C0rIK-65EqhSpLPFsReAo9sm-w5lpIm74TNYOB7FsBETZVKeZV5z9vS"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold tracking-tight text-slate-100">Arjun Mehta</span>
+<span class="text-[9px] uppercase tracking-[0.2em] text-[#9babce] font-semibold">Tower A - 402</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-800/40 transition-colors active:scale-95 text-slate-200 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2.5 right-2.5 flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400 border border-slate-900"></span>
+</span></button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-800/40 transition-colors active:scale-95 text-slate-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto space-y-10">
+<!-- Active Pass Section -->
+<section>
+<h2 class="text-[10px] font-bold uppercase text-[#9babce] mb-5">Current Active Pass</h2>
+<div class="glass-card p-6 relative overflow-hidden">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-xl font-semibold text-white mb-2">Rajesh Kumar - Delivery</h3>
+<p class="text-[13px] text-on-surface-variant flex items-center gap-2 font-light">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                            Valid until 18:45 PM
+                        </p>
+</div>
+<div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+<span class="material-symbols-outlined text-3xl text-slate-200">qr_code_2</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-[#34495e]/50 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-[16px] text-slate-300">local_shipping</span>
+</div>
+<div class="px-3 py-1 bg-white/5 text-slate-200 text-[9px] font-bold tracking-[0.15em] uppercase rounded-full border border-white/10">
+                            Active
+                        </div>
+</div>
+<button class="text-[11px] font-semibold text-[#9babce] hover:text-white transition-colors tracking-wide">View Details</button>
+</div>
+</div>
+</section>
+<!-- Quick Actions Bento -->
+<section>
+<h2 class="text-[10px] font-bold uppercase text-[#9babce] mb-5">Quick Actions</h2>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<button class="gunmetal-surface p-5 rounded-[24px] flex flex-col justify-between items-start h-36 transition-all active:scale-[0.98] shadow-xl border border-white/5 col-span-2 md:col-span-1">
+<div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-2xl">add</span>
+</div>
+<span class="text-sm font-semibold tracking-tight text-white text-left">Create One-Time Pass</span>
+</button>
+<button class="glass-card p-5 flex flex-col justify-between items-start h-36 transition-all hover:bg-white/[0.03] active:scale-[0.98]">
+<span class="material-symbols-outlined text-slate-300 text-3xl">verified_user</span>
+<span class="text-sm font-semibold tracking-tight text-slate-200 text-left leading-snug">Pre-approve Guest</span>
+</button>
+<button class="glass-card p-5 flex flex-col justify-between items-start h-36 transition-all hover:bg-white/[0.03] active:scale-[0.98]">
+<span class="material-symbols-outlined text-slate-300 text-3xl">engineering</span>
+<span class="text-sm font-semibold tracking-tight text-slate-200 text-left leading-snug">Daily Help Management</span>
+</button>
+</div>
+</section>
+<!-- Recent Visitors -->
+<section>
+<div class="flex justify-between items-center mb-5">
+<h2 class="text-[10px] font-bold uppercase text-[#9babce]">Recent Visitors</h2>
+<button class="text-[11px] font-medium text-[#9babce] hover:text-white transition-colors">See all history</button>
+</div>
+<div class="space-y-3">
+<!-- Visitor 1 -->
+<div class="glass-card p-5 flex items-center justify-between group cursor-pointer hover:bg-white/[0.03] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-slate-300">person</span>
+</div>
+<div>
+<p class="font-semibold text-white text-[15px] mb-1">Ananya Sharma</p>
+<p class="text-[12px] font-light text-on-surface-variant">Today, 14:20 PM</p>
+</div>
+</div>
+<div class="px-3 py-1 bg-white/5 text-[#9babce] text-[9px] font-bold tracking-widest uppercase rounded-full border border-white/5">
+                        SCANNED
+                    </div>
+</div>
+<!-- Visitor 2 -->
+<div class="glass-card p-5 flex items-center justify-between group cursor-pointer hover:bg-white/[0.03] transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-slate-300">home_repair_service</span>
+</div>
+<div>
+<p class="font-semibold text-white text-[15px] mb-1">Kiran Plumbing Services</p>
+<p class="text-[12px] font-light text-on-surface-variant">Today, 10:05 AM</p>
+</div>
+</div>
+<div class="px-3 py-1 bg-white/5 text-[#9babce] text-[9px] font-bold tracking-widest uppercase rounded-full border border-white/5">
+                        APPROVED
+                    </div>
+</div>
+</div>
+</section>
+<!-- Community Notice Banner -->
+<section class="pb-8">
+<div class="glass-card p-6 border-slate-700/30">
+<div class="flex items-center gap-3 mb-4 text-[#9babce]">
+<span class="material-symbols-outlined text-lg">campaign</span>
+<span class="text-[9px] font-bold uppercase tracking-[0.2em]">Notice Board</span>
+</div>
+<p class="text-[15px] font-semibold text-white mb-2">Annual Fire Drill - Sunday, 10 AM</p>
+<p class="text-[13px] text-on-surface-variant font-light leading-relaxed">Participation is mandatory for all residents of Tower A and B. Please assemble at the main lawn.</p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar via DataStore -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[20px] bg-[#090e18]/80 backdrop-blur-[24px] border-t border-slate-400/10 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex justify-around items-center h-20 px-4 pb-4">
+<a class="flex flex-col items-center justify-center bg-[#34495e] text-[#dbe5ff] rounded-[20px] px-5 py-2 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9babce] py-2 hover:text-white transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Visitors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9babce] py-2 hover:text-white transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Messages</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9babce] py-2 hover:text-white transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[11px] font-medium tracking-wide mt-0.5">Vault</span>
+</a>
+</nav>
+</body></html>
