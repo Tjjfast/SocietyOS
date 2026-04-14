@@ -11,6 +11,11 @@ const updateProfile = asyncHandler(async (req, res) => {
   res.json({ success: true, data: user });
 });
 
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await service.updateUser(req.params.id, req.user.societyId, req.body);
+  res.json({ success: true, data: user });
+});
+
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await service.getAllUsers(req.user.societyId, req.query);
   res.json({ success: true, data: users });
@@ -46,7 +51,12 @@ const saveFcmToken = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'FCM token saved' });
 });
 
+const deleteUser = asyncHandler(async (req, res) => {
+  await service.deleteUser(req.params.id, req.user.societyId);
+  res.json({ success: true, message: 'User deleted' });
+});
+
 module.exports = {
-  getProfile, updateProfile, getAllUsers, getUserById,
-  getPending, approve, reject, getContacts, saveFcmToken
+  getProfile, updateProfile, updateUser, getAllUsers, getUserById,
+  getPending, approve, reject, getContacts, saveFcmToken, deleteUser
 };

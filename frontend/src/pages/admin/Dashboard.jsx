@@ -1,55 +1,177 @@
-import React, { useEffect, useState } from 'react';
-import { Users, AlertCircle, ClipboardList, Activity } from 'lucide-react';
-import api from '../../services/api';
-import StatsCard from '../../components/StatsCard';
-import StatusPill from '../../components/StatusPill';
+
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import api from '../../api';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    totalResidents: 0,
+    totalGuards: 0,
+    entriesToday: 0,
+    pendingUsers: 0
+  });
+
+  const [recentEntries, setRecentEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchDashboard = async () => {
       try {
-        const { data } = await api.get('/dashboard/stats');
-        setStats(data.data);
+        const [statsRes, entriesRes] = await Promise.all([
+          api.get('/dashboard/stats'),
+          api.get('/entries?limit=5')
+        ]);
+
+        if (statsRes?.data?.data) {
+          setStats(statsRes.data.data);
+        }
+
+        if (entriesRes?.data?.data) {
+          setRecentEntries(entriesRes.data.data);
+        }
       } catch (err) {
-        console.error('Error fetching dashboard stats', err);
+        console.error("Dashboard fetch failed:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
+
+    fetchDashboard();
   }, []);
 
-  if (loading) return <div className="text-center text-white/50 pt-20">Gathering telemetry...</div>;
+  if (loading) {
+    return (
+      <div className="text-center text-slate-400 mt-20 text-lg font-semibold">
+        Loading dashboard...
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Platform Telemetry</h1>
-        <p className="text-gray-400">Live overview of your society operations.</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard title="Active Residents" value={stats?.totalResidents || 0} icon={Users} />
-        <StatsCard title="Active Passes" value={stats?.activePasses || 0} icon={Activity} />
-        <StatsCard title="Gate Entries Today" value={stats?.entriesToday || 0} icon={ClipboardList} />
-        <StatsCard title="Open Complaints" value={stats?.openComplaints || 0} icon={AlertCircle} trend={0} />
-      </div>
-
-      <div className="pt-6 border-t border-white/5">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold">Recent Activity</h2>
-          <button className="text-sm text-blue-400 hover:text-blue-300">View All Log</button>
+    <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 font-sans">
+      
+      {/* Header */}
+      <div className="mb-10 flex justify-between items-end">
+        <div>
+          <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-400 tracking-tight">
+            Systems Overview
+          </h2>
+          <p className="text-slate-400 mt-2 font-medium">
+            Real-time metrics and operations.
+          </p>
         </div>
-        
-        <div className="glass-panel p-2">
-          <div className="p-10 text-center text-gray-500 text-sm">
-            Detailed activity feed is integrated directly into the Entry Logs and Complaints modules.
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+        <StatCard title="Total Residents" value={stats?.totalResidents ?? 0} icon="group" />
+        <StatCard title="On-Duty Guards" value={stats?.totalGuards ?? 0} icon="shield" />
+        <StatCard title="Gate Check-ins" value={stats?.entriesToday ?? 0} icon="login" />
+        <StatCard title="Pending Approvals" value={stats?.pendingUsers ?? 0} icon="warning" highlight />
+
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-7 backdrop-blur-xl shadow-2xl">
+          <h3 className="text-xl font-bold text-white mb-6">Quick Actions</h3>
+
+          <div className="grid grid-cols-2 gap-4">
+
+            <ActionCard to="/admin/users" icon="person_add" label="New Resident" />
+            <ActionCard to="/admin/entries" icon="qr_code_2" label="Issue Pass" />
+            <ActionCard to="/admin/notices" icon="campaign" label="Broadcast" />
+            <ActionCard to="/admin/complaints" icon="emergency" label="Emergency" />
+
           </div>
         </div>
+
+        {/* Activity Placeholder (replace with real chart later) */}
+        <div className="lg:col-span-2 bg-white/[0.02] border border-white/5 rounded-3xl p-7 text-center text-slate-500">
+          Chart integration pending (use Recharts / Chart.js with real API)
+        </div>
       </div>
+
+      {/* Table */}
+      <div className="mt-8 bg-white/[0.02] border border-white/5 rounded-3xl shadow-2xl">
+        <div className="p-7 border-b border-white/5 flex justify-between">
+          <h3 className="text-xl font-bold text-white">Recent Gate Logs</h3>
+          <Link to="/admin/entries" className="text-indigo-400 text-sm font-bold">
+            View All
+          </Link>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-xs uppercase text-slate-500 border-b border-white/5">
+                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Type</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Gate</th>
+                <th className="px-6 py-4 text-right">Time</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {recentEntries.length > 0 ? (
+                recentEntries.map((entry) => {
+                  const name = entry.pass?.visitorName || entry.user?.name || 'Unknown';
+                  const type = entry.pass?.visitorType || entry.user?.role || 'Guest';
+                  const time = new Date(entry.entryTime || entry.createdAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  });
+
+                  return (
+                    <tr key={entry.id} className="border-b border-white/5">
+                      <td className="px-6 py-4 text-white">{name}</td>
+                      <td className="px-6 py-4 text-slate-400">{type}</td>
+                      <td className="px-6 py-4 text-slate-300">{entry.status || 'Entered'}</td>
+                      <td className="px-6 py-4 text-slate-500">{entry.gateScanned || 'MAIN-01'}</td>
+                      <td className="px-6 py-4 text-right text-slate-400">{time}</td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center py-6 text-slate-500">
+                    No recent activity
+                  </td>
+                </tr>
+              )}
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+
+      <div className="h-16"></div>
     </div>
+  );
+}
+
+/* ---------- Components ---------- */
+
+function StatCard({ title, value, icon, highlight }) {
+  return (
+    <div className={`p-6 rounded-2xl border ${highlight ? 'border-rose-500/30' : 'border-white/5'} bg-white/[0.02]`}>
+      <div className="flex justify-between mb-4">
+        <span className="material-symbols-outlined text-indigo-400">{icon}</span>
+      </div>
+      <h3 className="text-3xl font-bold text-white">{value}</h3>
+      <p className="text-slate-400 text-sm mt-1">{title}</p>
+    </div>
+  );
+}
+
+function ActionCard({ to, icon, label }) {
+  return (
+    <Link to={to} className="p-5 rounded-xl border border-white/5 text-center hover:bg-indigo-500/10 transition">
+      <span className="material-symbols-outlined text-2xl text-indigo-400">{icon}</span>
+      <p className="text-sm text-slate-300 mt-2 font-semibold">{label}</p>
+    </Link>
   );
 }

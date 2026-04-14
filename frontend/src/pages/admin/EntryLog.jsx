@@ -1,98 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import { Filter, Calendar, MapPin, UserCheck, Search } from 'lucide-react';
-import api from '../../services/api';
-import GlassCard from '../../components/GlassCard';
-import DataTable from '../../components/DataTable';
-import StatusPill from '../../components/StatusPill';
+import React, { useState, useEffect } from 'react';
+import api from '../../api';
+
+const STATUS_MAP = {
+  APPROVED: { color: 'bg-emerald-500', text: 'text-emerald-500', label: 'Inside' },
+  REJECTED: { color: 'bg-error', text: 'text-error', label: 'Denied' },
+  EXITED:   { color: 'bg-gray-500', text: 'text-gray-500', label: 'Exited' },
+  PENDING:  { color: 'bg-amber-500', text: 'text-amber-500', label: 'Pending' },
+};
+
+const TYPE_MAP = {
+  DELIVERY: { icon: 'local_shipping', color: 'text-blue-400 bg-blue-400/10', label: 'Delivery' },
+  GUEST:    { icon: 'person',          color: 'text-purple-400 bg-purple-400/10', label: 'Guest' },
+  SERVICE:  { icon: 'handyman',        color: 'text-amber-400 bg-amber-400/10', label: 'Service' },
+};
 
 export default function AdminEntries() {
   const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchEntries = async () => {
-    try {
-      const { data } = await api.get('/entry');
-      setEntries(data.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [stats, setStats] = useState({ total: 0, active: 0, denied: 0 });
 
   useEffect(() => {
-    fetchEntries();
+    api.get('/entries')
+      .then(res => {
+        const data = res.data.data || [];
+        setEntries(data);
+        setStats({
+          total:  data.length,
+          active: data.filter(e => e.status === 'APPROVED').length,
+          denied: data.filter(e => e.status === 'REJECTED').length,
+        });
+      })
+      .catch(err => console.error('Failed to fetch entries:', err));
   }, []);
 
-  const getMethodBadge = (method) => {
-    switch (method) {
-      case 'QR_SCAN': return <span className="text-blue-400 text-xs font-medium bg-blue-400/10 px-2 py-1 rounded">QR Scan</span>;
-      case 'LIVE_APPROVAL': return <span className="text-emerald-400 text-xs font-medium bg-emerald-400/10 px-2 py-1 rounded">Live Approved</span>;
-      case 'MANUAL_LOOKUP': return <span className="text-amber-400 text-xs font-medium bg-amber-400/10 px-2 py-1 rounded">Manual</span>;
-      default: return method;
-    }
-  };
-
-  const columns = [
-    { header: 'Time', render: (row) => (
-      <div>
-        <div className="text-white font-medium">{new Date(row.entryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-        <div className="text-xs text-gray-500">{new Date(row.entryTime).toLocaleDateString()}</div>
-      </div>
-    )},
-    { header: 'Visitor', render: (row) => (
-      <div>
-        <p className="text-white font-medium">{row.visitorName}</p>
-        <p className="text-xs text-gray-400">{row.visitorType.replace('_', ' ')}</p>
-      </div>
-    )},
-    { header: 'Destination', render: (row) => (
-      <div className="flex items-center gap-2">
-        <MapPin size={14} className="text-gray-500" />
-        <span>Flat {row.flat?.number || '—'}</span>
-      </div>
-    )},
-    { header: 'Method', render: (row) => getMethodBadge(row.method) },
-    { header: 'Status', render: (row) => (
-      <StatusPill 
-        status={row.status} 
-        variant={row.status === 'APPROVED' ? 'success' : row.status === 'SCANNED' ? 'info' : row.status === 'REJECTED' ? 'danger' : 'warning'} 
-      />
-    )},
-    { header: 'Guard on Duty', render: (row) => (
-      <div className="flex flex-col">
-        <span className="text-sm">{row.guard?.name || 'Unknown'}</span>
-        {row.exitTime && <span className="text-xs text-rose-400">Exited: {new Date(row.exitTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>}
-      </div>
-    )},
-  ];
-
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Gate Activity Log</h1>
-          <p className="text-gray-400">Complete immutable record of all societal entry and exit.</p>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input 
-              type="text" 
-              placeholder="Search visitor..." 
-              className="input-glass pl-10 h-10 w-64 text-sm"
-            />
+    <div className="pt-8 px-8 pb-12 min-h-[calc(100vh-80px)]">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-black text-white tracking-tight">Gate Activity</h2>
+            <p className="text-gray-400 mt-1">Real-time monitoring of all incoming and outgoing visitor logs.</p>
           </div>
-          <button className="btn-secondary flex items-center gap-2 h-10">
-            <Filter size={16} /> Filters
-          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="glass-morphism p-6 rounded-xl flex flex-col justify-between">
+            <span className="text-gray-500 text-sm font-medium uppercase tracking-widest">Today's Entries</span>
+            <div className="flex items-end justify-between mt-4">
+              <span className="text-4xl font-bold text-white">{stats.total}</span>
+              <span className="material-symbols-outlined text-white/50 text-4xl flex items-center">login</span>
+            </div>
+          </div>
+          <div className="glass-morphism p-6 rounded-xl flex flex-col justify-between">
+            <span className="text-gray-500 text-sm font-medium uppercase tracking-widest">Active Inside</span>
+            <div className="flex items-end justify-between mt-4">
+              <span className="text-4xl font-bold text-emerald-500">{stats.active}</span>
+              <span className="text-emerald-500 text-sm flex items-center gap-1 font-bold">Inside Premises</span>
+            </div>
+          </div>
+          <div className="glass-morphism p-6 rounded-xl flex flex-col justify-between">
+            <span className="text-gray-500 text-sm font-medium uppercase tracking-widest">Denied Access</span>
+            <div className="flex items-end justify-between mt-4">
+              <span className="text-4xl font-bold text-error">{stats.denied}</span>
+              <span className="text-error text-sm flex items-center gap-1">Rejected</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="glass-morphism rounded-xl overflow-hidden shadow-2xl border border-white/10">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-surface-container-high/50 text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-white/10">
+                  <th className="px-6 py-4">Visitor / Agency</th>
+                  <th className="px-6 py-4">Destination</th>
+                  <th className="px-6 py-4">Type</th>
+                  <th className="px-6 py-4">Time Entry</th>
+                  <th className="px-6 py-4">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {entries.map(entry => {
+                  const visitorName = entry.pass?.visitorName || entry.user?.name || 'Unknown';
+                  const visitorType = entry.pass?.visitorType || 'GUEST';
+                  const typeInfo = TYPE_MAP[visitorType] || TYPE_MAP.GUEST;
+                  const statusInfo = STATUS_MAP[entry.status] || STATUS_MAP.PENDING;
+                  const destUnit = entry.pass?.flat?.unitNumber || entry.flat?.unitNumber || '—';
+                  return (
+                    <tr key={entry.id} className="hover:bg-white/5 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-white text-sm">{visitorName}</span>
+                          <span className="text-xs text-gray-500">{entry.pass?.vehicleNumber || entry.pass?.phone || '—'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-300">{destUnit}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded ${typeInfo.color} text-xs font-bold uppercase tracking-tight`}>
+                          <span className="material-symbols-outlined text-[10px] flex items-center">{typeInfo.icon}</span> {typeInfo.label}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-mono text-gray-400">
+                        {new Date(entry.entryTime || entry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5">
+                          <div className={`w-1.5 h-1.5 rounded-full ${statusInfo.color}`}></div>
+                          <span className={`text-xs ${statusInfo.text} font-bold uppercase tracking-widest`}>{statusInfo.label}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {entries.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500 font-medium">No gate activity recorded yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="p-4 border-t border-white/5 flex items-center justify-between bg-white/5">
+            <p className="text-xs text-gray-500 italic">Gate stream connected and listening.</p>
+          </div>
         </div>
       </div>
-
-      <GlassCard className="!p-0 overflow-hidden">
-        <DataTable columns={columns} data={entries} keyField="id" isLoading={loading} />
-      </GlassCard>
     </div>
   );
 }

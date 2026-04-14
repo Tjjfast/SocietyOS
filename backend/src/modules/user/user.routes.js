@@ -10,7 +10,9 @@ router.get('/contacts', authenticate, controller.getContacts);
 router.get('/pending', authenticate, authorize('ADMIN'), controller.getPending);
 router.get('/', authenticate, authorize('ADMIN'), controller.getAllUsers);
 router.get('/:id', authenticate, authorize('ADMIN'), controller.getUserById);
+router.patch('/:id', authenticate, authorize('ADMIN'), controller.updateUser);
 router.patch('/:id/approve', authenticate, authorize('ADMIN'), controller.approve);
 router.patch('/:id/reject', authenticate, authorize('ADMIN'), controller.reject);
+router.delete('/:id', authenticate, authorize('ADMIN'), controller.deleteUser);
 
 module.exports = router;

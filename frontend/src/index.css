@@ -125,3 +125,26 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-outline);
 }
+
+/* Auth Login Styling */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.particle-bg {
+  background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.particle-bg::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+}

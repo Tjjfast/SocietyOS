@@ -20,9 +20,10 @@
 ### 🚧 v2.0 Web Admin Portal & Landing Page (In Progress)
 
 - [x] **Phase 1: Infrastructure & Landing Page**
-- [ ] **Phase 2: Dashboard Foundation & Auth**
-- [ ] **Phase 3: Dashboard Overview Modules**
-- [ ] **Phase 4: Management Portals & Integration**
+- [x] **Phase 2: Dashboard Foundation & Auth**
+- [x] **Phase 3: Dashboard Overview Modules**
+- [x] **Phase 4: Management Portals & Integration**
+- [x] **Phase 5: Legacy Modules Migration**
 
 ## Phase Details
 
@@ -66,12 +67,21 @@
 **Plans**: 1
 - [ ] 04-01: Build internal management pages
 
+### Phase 5: Legacy Modules Migration
+**Goal**: Migrate the remaining administrative portals (Flat Registry, Gate Activity, Complaints, and Notices) to the Monotone design system.
+**Depends on**: Phase 4
+**Success Criteria**:
+1. Flats, Entries, Complaints, and Notices pages match the dark surface aesthetic with glass-morphism panels, inheriting the table designs established in the User Management modules.
+**Plans**: 1
+- [ ] 05-01: Rebuild internal legacy pages
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Infrastructure & Landing Page | 1/1 | Complete | 2026-04-13 |
-| 2. Dashboard Foundation & Auth | 0/1 | Not started | - |
-| 3. Dashboard Overview Modules | 0/1 | Not started | - |
-| 4. Management Portals & Integration | 0/1 | Not started | - |
+| 2. Dashboard Foundation & Auth | 1/1 | Complete | 2026-04-14 |
+| 3. Dashboard Overview Modules | 1/1 | Complete | 2026-04-14 |
+| 4. Management Portals & Integration | 1/1 | Complete | 2026-04-14 |
+| 5. Legacy Modules Migration | 1/1 | Complete | 2026-04-14 |
 

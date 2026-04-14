@@ -19,6 +19,22 @@ const updateProfile = async (userId, data) => {
   });
 };
 
+const updateUser = async (userId, societyId, data) => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || user.societyId !== societyId) throw new Error('User not found');
+
+  const allowed = {};
+  if (data.name) allowed.name = data.name;
+  if (data.phone) allowed.phone = data.phone;
+  if (data.email) allowed.email = data.email;
+
+  return await prisma.user.update({
+    where: { id: userId },
+    data: allowed,
+    select: { id: true, name: true, email: true, phone: true, role: true, status: true }
+  });
+};
+
 const getAllUsers = async (societyId, filters = {}) => {
   const where = { societyId };
   if (filters.role) where.role = filters.role;
@@ -113,8 +129,15 @@ const saveFcmToken = async (userId, token) => {
   });
 };
 
+const deleteUser = async (userId, societyId) => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || user.societyId !== societyId) throw new Error('User not found');
+  
+  return await prisma.user.delete({ where: { id: userId } });
+};
+
 module.exports = {
-  getProfile, updateProfile, getAllUsers, getUserById,
+  getProfile, updateProfile, updateUser, getAllUsers, getUserById,
   getPendingUsers, approveUser, rejectUser,
-  getSocietyContacts, saveFcmToken
+  getSocietyContacts, saveFcmToken, deleteUser
 };

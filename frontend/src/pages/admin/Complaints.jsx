@@ -1,95 +1,148 @@
-import React, { useEffect, useState } from 'react';
-import { MessageSquare, CheckCircle, Clock } from 'lucide-react';
-import api from '../../services/api';
-import GlassCard from '../../components/GlassCard';
-import StatusPill from '../../components/StatusPill';
+import React, { useState, useEffect } from 'react';
+import api from '../../api';
+
+const PRIORITY_MAP = {
+  HIGH:   { dot: 'bg-error',        text: 'text-error' },
+  MEDIUM: { dot: 'bg-yellow-500',   text: 'text-yellow-500' },
+  LOW:    { dot: 'bg-gray-400',     text: 'text-gray-400' },
+};
+
+const STATUS_STYLE = {
+  OPEN:        'bg-gray-500/10 text-gray-400',
+  IN_PROGRESS: 'bg-amber-500/10 text-amber-500',
+  RESOLVED:    'bg-emerald-500/10 text-emerald-500',
+};
 
 export default function AdminComplaints() {
   const [complaints, setComplaints] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  const fetchComplaints = async () => {
-    try {
-      const { data } = await api.get('/complaint');
-      setComplaints(data.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const fetchComplaints = () => {
+    api.get('/complaints')
+      .then(res => setComplaints(res.data.data || []))
+      .catch(err => console.error('Failed to fetch complaints:', err));
   };
 
-  useEffect(() => {
-    fetchComplaints();
-  }, []);
+  useEffect(() => { fetchComplaints(); }, []);
 
-  const handleUpdateStatus = async (id, status) => {
+  const handleClose = async (id) => {
     try {
-      await api.patch(`/complaint/${id}/status`, { status });
+      await api.patch(`/complaints/${id}/close`);
       fetchComplaints();
     } catch (err) {
-      alert('Failed to update complaint');
+      console.error('Failed to close complaint:', err);
+      alert(err.response?.data?.message || 'Failed to close ticket.');
     }
   };
 
-  if (loading) return <div className="p-8 text-gray-400">Loading complaints...</div>;
+  const open       = complaints.filter(c => c.status === 'OPEN').length;
+  const inProgress = complaints.filter(c => c.status === 'IN_PROGRESS').length;
+  const resolved   = complaints.filter(c => c.status === 'RESOLVED').length;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Complaints Management</h1>
-        <p className="text-gray-400">Review and resolve resident issues.</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {complaints.length === 0 ? (
-          <div className="col-span-full p-12 text-center text-gray-500 glass-panel">
-            No complaints found.
+    <div className="pt-8 px-8 pb-12 min-h-[calc(100vh-80px)]">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-black text-white tracking-tight">Complaints &amp; Tickets</h2>
+            <p className="text-gray-400 mt-1">Track and resolve resident issues and facility maintenance requests.</p>
           </div>
-        ) : (
-          complaints.map(complaint => (
-            <GlassCard key={complaint.id} className="flex flex-col">
-              <div className="flex justify-between items-start mb-4">
-                <StatusPill 
-                  status={complaint.status} 
-                  variant={complaint.status === 'RESOLVED' ? 'success' : complaint.status === 'IN_PROGRESS' ? 'warning' : 'danger'} 
-                />
-                <span className="text-xs text-gray-500 flex items-center gap-1">
-                  <Clock size={12} />
-                  {new Date(complaint.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              
-              <h3 className="text-lg font-bold text-white mb-2">{complaint.title}</h3>
-              <p className="text-sm text-gray-400 mb-6 flex-1">{complaint.description}</p>
-              
-              <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-auto">
-                <div className="text-sm text-gray-500">
-                  By: <span className="text-gray-300">{complaint.creator?.name}</span>
-                </div>
-                
-                {complaint.status !== 'RESOLVED' && (
-                  <div className="flex gap-2">
-                    {complaint.status === 'OPEN' && (
-                      <button 
-                        onClick={() => handleUpdateStatus(complaint.id, 'IN_PROGRESS')}
-                        className="text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-lg hover:bg-amber-500/20 transition-colors"
-                      >
-                        Start Fix
-                      </button>
-                    )}
-                    <button 
-                      onClick={() => handleUpdateStatus(complaint.id, 'RESOLVED')}
-                      className="text-xs bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-lg hover:bg-emerald-500/20 transition-colors flex items-center gap-1"
-                    >
-                      <CheckCircle size={14} /> Resolve
-                    </button>
-                  </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="glass-morphism p-6 rounded-xl flex flex-col justify-between">
+            <span className="text-gray-500 text-sm font-medium uppercase tracking-widest">Open Tickets</span>
+            <div className="flex items-end justify-between mt-4">
+              <span className="text-4xl font-bold text-white">{open}</span>
+              <span className="material-symbols-outlined text-white/50 text-4xl flex items-center">report</span>
+            </div>
+          </div>
+          <div className="glass-morphism p-6 rounded-xl flex flex-col justify-between">
+            <span className="text-gray-500 text-sm font-medium uppercase tracking-widest">In Progress</span>
+            <div className="flex items-end justify-between mt-4">
+              <span className="text-4xl font-bold text-amber-500">{inProgress}</span>
+              <span className="text-amber-500 text-sm flex items-center gap-1 font-bold">Under Review</span>
+            </div>
+          </div>
+          <div className="glass-morphism p-6 rounded-xl flex flex-col justify-between">
+            <span className="text-gray-500 text-sm font-medium uppercase tracking-widest">Resolved</span>
+            <div className="flex items-end justify-between mt-4">
+              <span className="text-4xl font-bold text-emerald-500">{resolved}</span>
+              <span className="text-emerald-500 text-sm flex items-center gap-1">Tickets Closed</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="glass-morphism rounded-xl overflow-hidden shadow-2xl border border-white/10">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-surface-container-high/50 text-xs uppercase tracking-wider text-gray-400 font-bold border-b border-white/10">
+                  <th className="px-6 py-4">Ticket details</th>
+                  <th className="px-6 py-4">Requester</th>
+                  <th className="px-6 py-4">Priority</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {complaints.map(complaint => {
+                  const priority = complaint.priority || 'LOW';
+                  const status   = complaint.status   || 'OPEN';
+                  const pStyle = PRIORITY_MAP[priority] || PRIORITY_MAP.LOW;
+                  const sStyle = STATUS_STYLE[status]   || STATUS_STYLE.OPEN;
+                  return (
+                    <tr key={complaint.id} className="hover:bg-white/5 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-white text-sm">{complaint.title || complaint.description?.substring(0, 50)}</span>
+                          <span className="text-[10px] text-gray-500 font-mono">TKT-{complaint.id.substring(0, 4).toUpperCase()}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-gray-300">{complaint.user?.name || 'Unknown'}</span>
+                          <span className="text-xs text-gray-500">{complaint.flat?.unitNumber || complaint.user?.email || '—'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5">
+                          <div className={`w-2 h-2 rounded-full ${pStyle.dot}`}></div>
+                          <span className={`text-xs ${pStyle.text} font-bold uppercase tracking-widest`}>{priority}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded ${sStyle} text-[10px] font-bold uppercase tracking-tight`}>
+                          {status.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {status !== 'RESOLVED' && (
+                            <button
+                              onClick={() => handleClose(complaint.id)}
+                              className="p-1.5 rounded hover:bg-white/10 text-gray-400 hover:text-emerald-400 transition-colors bg-transparent border-none cursor-pointer flex items-center"
+                              title="Close Ticket"
+                            >
+                              <span className="material-symbols-outlined text-sm">check_circle</span>
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {complaints.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500 font-medium">No complaints submitted yet.</td>
+                  </tr>
                 )}
-              </div>
-            </GlassCard>
-          ))
-        )}
+              </tbody>
+            </table>
+          </div>
+          <div className="p-4 border-t border-white/5 flex items-center justify-between bg-white/5">
+            <p className="text-xs text-gray-500 italic">Showing all active and historical tickets.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
